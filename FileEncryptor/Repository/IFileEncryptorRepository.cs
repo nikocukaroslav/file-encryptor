@@ -8,7 +8,7 @@ namespace FileEncryptor.Repository
 {
     public interface IFileEncryptorRepository
     {
-        byte[] EncryptString(string text, byte[] key, byte[] iv);
+        void EncryptString(string text, string outputFilePath, byte[] key, byte[] iv, Action<int> progressCallback);
         void EncryptFile(string inputFilePath, string outputFilePath, byte[] key, byte[] iv, Action<int> progressCallback);
         byte[] GenerateRandomKey();
         byte[] GenerateRandomIv();

@@ -1,0 +1,12 @@
+﻿<Window x:Class="FileEncryptor.CustomWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Encryption Complete" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight">
+    <StackPanel Margin="12,6">
+        <TextBlock x:Name="TimeTextBox" Height="24" Margin="0,8,0,0"  TextWrapping="Wrap"/>
+        <TextBlock x:Name="FileSizeTextBox" Height="24" Margin="0,8,0,0"  TextWrapping="Wrap"/>
+        <TextBlock x:Name="KeyTextBox" Height="24" Margin="0,8,0,0" TextWrapping="Wrap"/>
+        <TextBlock x:Name="IvTextBox" Height="24" Margin="0,8,0,0"  TextWrapping="Wrap"/>
+        <Button Height="24" Margin="0,8,0,0"  Content="Copy Key and IV" Click="CopyToClipboard_Click"/>
+    </StackPanel>
+</Window>

@@ -10,20 +10,29 @@ namespace FileEncryptor.Repository
 {
     public class AESEncryptionRepository : IFileEncryptorRepository
     {
-        public byte[] EncryptString(string text, byte[] key, byte[] iv)
+        public void EncryptString(string text, string outputFilePath, byte[] key, byte[] iv, Action<int> progressCallback)
         {
             using (Aes aes = Aes.Create())
             using (ICryptoTransform encryptor = aes.CreateEncryptor(key, iv))
-            using (MemoryStream ms = new MemoryStream())
-            using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+            using (FileStream filestream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
+            using (CryptoStream cs = new CryptoStream(filestream, encryptor, CryptoStreamMode.Write))
+            using (StreamWriter writer = new StreamWriter(cs))
             {
+                int chunkSize = 4096;
+                int totalChunks = (text.Length + chunkSize - 1) / chunkSize;
+                int currentChunk = 0;
 
-                using (StreamWriter writer = new StreamWriter(cs))
+                for (int i = 0; i < totalChunks; i += chunkSize)
                 {
-                    writer.Write(text);
+                    int length = Math.Min(chunkSize, text.Length - i);
+                    writer.Write(text.Substring(i, length));
+
+                    currentChunk++;
+
+                    int progress = (currentChunk * 100) / totalChunks;
+                    progressCallback(progress);
                 }
-                return ms.ToArray();
-            };
+            }
         }
 
         public void EncryptFile(string inputFilePath, string outputFilePath, byte[] key, byte[] iv, Action<int> progressCallback)
