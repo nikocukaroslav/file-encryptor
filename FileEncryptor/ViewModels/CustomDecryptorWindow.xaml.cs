@@ -12,26 +12,21 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace FileEncryptor
+namespace FileEncryptor.ViewModels
 {
     /// <summary>
-    /// Interaction logic for CustomWindow.xaml
+    /// Interaction logic for CustomDecryptorWindow.xaml
     /// </summary>
-    public partial class CustomWindow : Window
+    public partial class CustomDecryptorWindow : Window
     {
-        public CustomWindow(string key, string iv, TimeSpan time, double fileSize)
+        public CustomDecryptorWindow(TimeSpan time, double fileSize)
         {
             InitializeComponent();
-            TimeTextBox.Text =$"Duration: {time.ToString().Substring(0, 8)}";
+            TimeTextBox.Text = $"Duration: {time.ToString().Substring(0, 8)}";
             FileSizeTextBox.Text = $"File size: {fileSize:F2} Mb";
-            KeyTextBox.Text = $"Key: {key}";
-            IvTextBox.Text = $"IV: {iv}";
         }
-
-        private void CopyToClipboard_Click(object sender, RoutedEventArgs e)
+        private void Finish(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(KeyTextBox.Text + "\n" + IvTextBox.Text);
-
             this.Close();
         }
     }

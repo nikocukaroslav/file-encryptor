@@ -9,6 +9,6 @@ namespace FileEncryptor.Factory
 {
    public interface IFileEncryptorFactory
     {
-        IFileEncryptorRepository GetEncryptorRepository(string encryptionType);
+        IFileEncryptorRepository GetFileEncryptorRepository(string encryptionType);
     }
 }

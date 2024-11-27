@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace FileEncryptor.Repository
 {
-    public class AESEncryptionRepository : IFileEncryptorRepository
+    public class DESEncryptionRepository: IFileEncryptorRepository
     {
         public void EncryptString(string text, string outputFilePath, byte[] key, byte[] iv, Action<int> progressCallback)
         {
-            using (Aes aes = Aes.Create())
-            using (ICryptoTransform encryptor = aes.CreateEncryptor(key, iv))
+            using (DES des = DES.Create())
+            using (ICryptoTransform encryptor = des.CreateEncryptor(key, iv))
             using (FileStream filestream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
             using (CryptoStream cs = new CryptoStream(filestream, encryptor, CryptoStreamMode.Write))
             using (StreamWriter writer = new StreamWriter(cs))
@@ -36,8 +36,8 @@ namespace FileEncryptor.Repository
         }
         public void DecryptString(string text, string outputFilePath, byte[] key, byte[] iv, Action<int> progressCallback)
         {
-            using (Aes aes = Aes.Create())
-            using (ICryptoTransform encryptor = aes.CreateDecryptor(key, iv))
+            using (DES des = DES.Create())
+            using (ICryptoTransform encryptor = des.CreateDecryptor(key, iv))
             using (FileStream filestream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
             using (CryptoStream cs = new CryptoStream(filestream, encryptor, CryptoStreamMode.Write))
             using (StreamWriter writer = new StreamWriter(cs))
@@ -60,8 +60,8 @@ namespace FileEncryptor.Repository
         }
         public void EncryptFile(string inputFilePath, string outputFilePath, byte[] key, byte[] iv, Action<int> progressCallback)
         {
-            using (Aes aes = Aes.Create())
-            using (ICryptoTransform encryptor = aes.CreateEncryptor(key, iv))
+            using (DES des = DES.Create())
+            using (ICryptoTransform encryptor = des.CreateEncryptor(key, iv))
             using (FileStream inputFileStream = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read))
             using (FileStream outputFileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
             using (CryptoStream cs = new CryptoStream(outputFileStream, encryptor, CryptoStreamMode.Write))
@@ -81,12 +81,12 @@ namespace FileEncryptor.Repository
                 }
                 cs.FlushFinalBlock();
             }
-            
+
         }
         public void DecryptFile(string inputFilePath, string outputFilePath, byte[] key, byte[] iv, Action<int> progressCallback)
         {
-            using (Aes aes = Aes.Create())
-            using (ICryptoTransform encryptor = aes.CreateDecryptor(key, iv))
+            using (DES des = DES.Create())
+            using (ICryptoTransform encryptor = des.CreateDecryptor(key, iv))
             using (FileStream inputFileStream = new FileStream(inputFilePath, FileMode.Open, FileAccess.Read))
             using (FileStream outputFileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
             using (CryptoStream cs = new CryptoStream(outputFileStream, encryptor, CryptoStreamMode.Write))
@@ -109,18 +109,18 @@ namespace FileEncryptor.Repository
         }
         public byte[] GenerateRandomKey()
         {
-            using (Aes aes = Aes.Create())
+            using (DES des = DES.Create())
             {
-                aes.GenerateKey();
-                return aes.Key;
+                des.GenerateKey();
+                return des.Key;
             }
         }
         public byte[] GenerateRandomIv()
         {
-            using (Aes aes = Aes.Create())
+            using (DES des = DES.Create())
             {
-                aes.GenerateIV();
-                return aes.IV;
+                des.GenerateIV();
+                return des.IV;
             }
         }
     }

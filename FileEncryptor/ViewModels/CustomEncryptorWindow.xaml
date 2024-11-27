@@ -1,7 +1,11 @@
-﻿<Window x:Class="FileEncryptor.CustomWindow"
+﻿<Window x:Class="FileEncryptor.ViewModels.CustomEncryptorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Encryption Complete" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight">
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileEncryptor.ViewModels"
+        mc:Ignorable="d"
+        Title="Complete" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
     <StackPanel Margin="12,6">
         <TextBlock x:Name="TimeTextBox" Height="24" Margin="0,8,0,0"  TextWrapping="Wrap"/>
         <TextBlock x:Name="FileSizeTextBox" Height="24" Margin="0,8,0,0"  TextWrapping="Wrap"/>

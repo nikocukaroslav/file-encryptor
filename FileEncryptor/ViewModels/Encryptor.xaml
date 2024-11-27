@@ -1,0 +1,28 @@
+﻿<Window x:Class="FileEncryptor.ViewModels.Encryptor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileEncryptor.Data"
+        mc:Ignorable="d"
+        Title="Encryptor" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    
+    <Window.Resources>
+        <ObjectDataProvider x:Key="EncryptionMethodsProvider" ObjectType="{x:Type local:EncryptionMethods}" MethodName="GetEncryptionMethods" />
+    </Window.Resources>
+    
+    <StackPanel Margin="16,12" Width="240">
+        <TextBlock Height="20" Text="Choose file to encrypt"/>
+        <Button Name="SelectFileToEncrypt" Content="Click to select"  Height="24" Click="OpenFile"/>
+        <TextBlock  Margin="0,8,0,0" Height="20" Text="Or write a message" />
+        <TextBox x:Name="MessageToEncrypt" Height="24" TextChanged="TextBox_TextChanged"/>
+        <TextBlock Margin="0,8,0,0" Height="20" Text="Type of enryption"/>
+        <ComboBox DisplayMemberPath="Name" SelectedValuePath="Name" ItemsSource="{Binding Source={StaticResource EncryptionMethodsProvider}}" 
+             Name="SelectEncryptionTypeInput" SelectionChanged="ListBox_SelectionChanged"/>
+        <StackPanel Name="EncryptionProgress"  Margin="0,24,0,0" Visibility="Hidden">
+            <TextBlock TextWrapping="Wrap" Text="Encryption in progress..." Height="20"/>
+            <ProgressBar Name="EncryptionProgressBar" Height="14"/>
+        </StackPanel>
+        <Button Content="Start" Margin="0,16,0,0" Height="32" Click="Start"/>
+    </StackPanel>
+</Window>

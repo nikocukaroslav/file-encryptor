@@ -7,18 +7,21 @@ using System.Threading.Tasks;
 
 namespace FileEncryptor.Factory
 {
-    public class FIleEncryptorFactory : IFileEncryptorFactory
+    public class FileEncryptorFactory : IFileEncryptorFactory
     {
         private IFileEncryptorRepository _factory;
 
-        public IFileEncryptorRepository GetEncryptorRepository(string encryptionType)
+        public IFileEncryptorRepository GetFileEncryptorRepository(string encryptionType)
         {
             switch (encryptionType)
             {
                 case "AES":
                     _factory = new AESEncryptionRepository();
                     break;
-                default: throw new ArgumentException("encryptionType");
+                case "DES":
+                    _factory = new DESEncryptionRepository();
+                    break;  
+                default: throw new ArgumentException(encryptionType);
             }
 
             return _factory;

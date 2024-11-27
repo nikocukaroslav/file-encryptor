@@ -1,0 +1,32 @@
+﻿<Window x:Class="FileEncryptor.ViewModels.Decryptor"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FileEncryptor.Data"
+        mc:Ignorable="d"
+        Title="Decryptor" WindowStartupLocation="CenterScreen" SizeToContent="WidthAndHeight" ResizeMode="NoResize">
+    
+    <Window.Resources>
+        <ObjectDataProvider x:Key="EncryptionMethodsProvider" ObjectType="{x:Type local:EncryptionMethods}" MethodName="GetEncryptionMethods" />
+    </Window.Resources>
+    
+    <StackPanel Margin="16,12" Width="240">
+        <TextBlock Height="20" Text="Choose file to decrypt"/>
+        <Button x:Name="SelectFileToDecrypt" Content="Click to select"  Height="24" Click="OpenFile"/>
+        <TextBlock  Margin="0,8,0,0" Height="20" Text="Or write an encrypted message" />
+        <TextBox x:Name="MessageToDecrypt"  Height="24" TextChanged="TextBox_TextChanged"/>
+        <TextBlock Margin="0,8,0,0" Height="20" Text="Type of decryption"/>
+        <ComboBox DisplayMemberPath="Name" SelectedValuePath="Name" ItemsSource="{Binding Source={StaticResource EncryptionMethodsProvider}}" Height="24" 
+                    Name="SelectDecryptionTypeInput" SelectionChanged="ListBox_SelectionChanged"/>
+        <TextBlock  Margin="0,8,0,0" Height="20" Text="Key:" />
+        <TextBox x:Name="KeyTextBox"  Height="24"/>
+        <TextBlock  Margin="0,8,0,0" Height="20" Text="IV:" />
+        <TextBox x:Name="IVTextBox"  Height="24"/>
+        <StackPanel Name="DecryptionProgress"  Margin="0,24,0,0" Visibility="Hidden">
+            <TextBlock TextWrapping="Wrap" Text="Decryption in progress..." Height="20"/>
+            <ProgressBar Name="DecryptionProgressBar" Height="14"/>
+        </StackPanel>
+        <Button Content="Start" Margin="0,16,0,0" Height="32" Click="Start"/>
+    </StackPanel>
+</Window>

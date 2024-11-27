@@ -1,11 +1,14 @@
 ﻿using FileEncryptor.Data;
 using FileEncryptor.Factory;
-using FileEncryptor.Repository;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -13,35 +16,24 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace FileEncryptor
+namespace FileEncryptor.ViewModels
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for Encryptor.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class Encryptor : Window
     {
         private readonly IFileEncryptorFactory _repository;
 
         private string fileToEncrypt;
         private string stringToEncrypt;
-        private string encryptionType = EncryptionMethods.GetEncryptionMethods().First().Name;
-        public MainWindow()
+        private string encryptionType;
+        public Encryptor()
         {
-            _repository = new FIleEncryptorFactory();
             InitializeComponent();
-        }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            stringToEncrypt = MessageToEncrypt.Text;
-        }
-
-        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            encryptionType = SelectEncryptionTypeInput.Name;
+            _repository = new FileEncryptorFactory();
         }
 
         private void OpenFile(object sender, RoutedEventArgs e)
@@ -56,25 +48,27 @@ namespace FileEncryptor
             {
                 string filePath = openFileDialog.FileName;
                 fileToEncrypt = filePath;
-                SelectFileToEncrypt.Content = filePath;
+                SelectFileToEncrypt.Content = openFileDialog.FileName;
             }
         }
 
-        private void StartEncryption(object sender, RoutedEventArgs e)
+        private void Start(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(stringToEncrypt) && string.IsNullOrEmpty(fileToEncrypt))
+            if (string.IsNullOrEmpty(stringToEncrypt) && string.IsNullOrEmpty(fileToEncrypt) && string.IsNullOrEmpty(encryptionType))
             {
-                MessageBox.Show("Select data to encrypt");
+                MessageBox.Show("Select data");
                 return;
             }
+
             DateTime startTime = DateTime.Now;
 
-            var key = _repository.GetEncryptorRepository(encryptionType).GenerateRandomKey();
-            var iv = _repository.GetEncryptorRepository(encryptionType).GenerateRandomIv();
+            byte[] key = _repository.GetFileEncryptorRepository(encryptionType).GenerateRandomKey();
+            byte[] iv = _repository.GetFileEncryptorRepository(encryptionType).GenerateRandomIv();
+
 
             var saveFileDialog = new SaveFileDialog
             {
-                Title = "Save encrypted file",
+                Title = "Save file",
                 FileName = "encrypted_file.txt"
             };
 
@@ -94,21 +88,23 @@ namespace FileEncryptor
 
             worker.DoWork += (s, args) =>
             {
-                
-                if (!string.IsNullOrEmpty(stringToEncrypt))
+                var repository = _repository.GetFileEncryptorRepository(encryptionType);
+
+                if (!string.IsNullOrEmpty(fileToEncrypt))
                 {
-                    _repository.GetEncryptorRepository(encryptionType).EncryptString(stringToEncrypt, path, key, iv, progress =>
+                    repository.EncryptFile(fileToEncrypt, path, key, iv, progress =>
                     {
                         worker.ReportProgress(progress);
                     });
                 }
-                else if (!string.IsNullOrEmpty(fileToEncrypt))
+                else if (!string.IsNullOrEmpty(stringToEncrypt))
                 {
-                    _repository.GetEncryptorRepository(encryptionType).EncryptFile(fileToEncrypt, path, key, iv, progress =>
+                    repository.EncryptString(stringToEncrypt, path, key, iv, progress =>
                     {
                         worker.ReportProgress(progress);
                     });
                 }
+
             };
 
             worker.ProgressChanged += (s, args) =>
@@ -124,7 +120,7 @@ namespace FileEncryptor
 
                 if (args.Error != null)
                 {
-                    MessageBox.Show("An error occurred during encryption: " + args.Error.Message);
+                    MessageBox.Show("An error occurred: " + args.Error.Message);
                     ResetValues();
                     return;
                 }
@@ -135,7 +131,7 @@ namespace FileEncryptor
                 long fileSize = new FileInfo(path).Length;
                 double fileSizeInMB = fileSize / (1024.0 * 1024.0);
 
-                CustomWindow customWindow = new CustomWindow(stringKey, stringIv, encryptionDuration, fileSizeInMB);
+                CustomEncryptorWindow customWindow = new CustomEncryptorWindow(stringKey, stringIv, encryptionDuration, fileSizeInMB);
                 customWindow.ShowDialog();
 
                 ResetValues();
@@ -143,7 +139,6 @@ namespace FileEncryptor
 
             worker.RunWorkerAsync();
         }
-
         private void ResetValues()
         {
             EncryptionProgress.Visibility = Visibility.Hidden;
@@ -152,10 +147,13 @@ namespace FileEncryptor
             fileToEncrypt = null;
             stringToEncrypt = null;
         }
-
-        private void StartDecryption(object sender, RoutedEventArgs e)
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-
+            stringToEncrypt = MessageToEncrypt.Text;
+        }
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            encryptionType = SelectEncryptionTypeInput.SelectedValue.ToString();
         }
     }
 }
